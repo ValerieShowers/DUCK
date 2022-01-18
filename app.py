@@ -1,4 +1,5 @@
 import pygame
+from level import Level
 import pygame.display
 import pygame.transform
 import pygame.sprite
@@ -46,6 +47,14 @@ class Player(pygame.sprite.Sprite):
         self.right = False
 
         self.gravity = 0
+        self.level = Level()
+
+        self.curr_level = self.level.curr_level
+
+        self.ground = self.level.ground
+        self.sky = self.level.sky
+
+    
 
 
     def animate(self):
@@ -103,9 +112,13 @@ class Player(pygame.sprite.Sprite):
             self.rect.y = get_platform(self.image)
 
         if player.rect.x <= 0:
-            player.rect.x = 0
+            self.level.old_part()
+            player.rect.x = 1500
         elif player.rect.x >= 1600:
+            self.level.new_part()
             player.rect.x = 0
+        self.ground = self.level.ground
+        self.sky = self.level.sky
 
         print(player.rect.x)
 
@@ -116,12 +129,7 @@ width, height = 1600, 850
 display = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Duck Shooter")
 
-ground = pygame.transform.rotozoom(
-    pygame.image.load("assets/levels/level_1/part_1/ground.png"), 0, 2
-)
-sky = pygame.transform.rotozoom(
-    pygame.image.load("assets/levels/level_1/part_1/sky.png"), 0, 2
-)
+
 
 
 
@@ -148,8 +156,8 @@ while 1:
             pass
 
     # Draw
-    display.blit(sky, (0,0))
-    display.blit(ground, (0, 600))
+    display.blit(player.sky, (0,0))
+    display.blit(player.ground, (0, 600))
     
     player_group.draw(display)
     player_group.update()
@@ -157,3 +165,4 @@ while 1:
     player.movement()
     
     pygame.display.update()
+    
